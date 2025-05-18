@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><title>ml flask api</title>
+</head>
+<body><h2>입력값</h2>
+    <form id="predict-form">
+      <input type="number" step="any" name="f1" required>
+      <input type="number" step="any" name="f2" required>
+      <input type="number" step="any" name="f3" required>
+      <input type="number" step="any" name="f4" required>
+      <button type="submit">예측</button>
+    </form>
+    <div id="result1"></div><div id="result2"></div>
+    <script>
+    document.getElementById('predict-form').onsubmit = async function(e) {
+      e.preventDefault();
+      let form = e.target;
+      let features = [form.f1.value, form.f2.value, form.f3.value, form.f4.value].map(Number);
+      //console.log("1");
+      let res = await fetch('/v1/predict', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({'features':features})
+      });
+      let data = await res.json();
+      document.getElementById('result1').innerText = '예측 결과: '+ data.prediction;  
+      document.getElementById('result2').innerText = '예측 결과: '+ JSON.stringify(data);  
+    }
+</script></body></html>
