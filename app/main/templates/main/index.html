@@ -2,14 +2,15 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='style.css') }}" />
     <title>Iris 예측 (API KEY 입력)</title>
 </head>
 <body>
-    <h1>Iris 품종 예측</h1>
+    <h4 class="main">Iris 품종 예측</h4>
     {% if error %}
         <div style="color: red;">{{ error }}</div>
     {% endif %}
-    <form action="/" method="post">
+    <form method="post" action="{{ url_for('main.index') }}">        
         <label>API KEY: 
             <input name="api_key" type="password" required value="{{ api_key|default('') }}">
         </label><br>

@@ -1,12 +1,8 @@
-# app/main.py
-from flask import Flask, request, render_template, jsonify, abort
+from flask import Flask, request, render_template, jsonify, abort, current_app
 import pickle
 import os
 
-from .config import Config
-
-app = Flask(__name__)
-app.config.from_object(Config)
+from . import main
 
 # Load model
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model.pkl')
@@ -19,11 +15,11 @@ def check_api_key(request):
     key = (request.headers.get('x-api-key') or
            request.args.get('api_key') or
            request.form.get('api_key'))
-    print('받은 API KEY:', key, '기대값:', app.config['API_KEY'])  # <--- 임시 디버깅용
-    if key != app.config['API_KEY']:
+    print('받은 API KEY:', key, '기대값:', current_app.config['API_KEY'])  # <--- 임시 디버깅용
+    if key != current_app.config['API_KEY']:
         abort(401, 'Invalid or missing API Key')
 
-@app.route('/', methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         check_api_key(request)
@@ -33,17 +29,17 @@ def index():
             pl = float(request.form['petal_length'])
             pw = float(request.form['petal_width'])
         except Exception as e:
-            return render_template('index.html', error='입력 오류: '+str(e))
+            return render_template('main/index.html', error='입력 오류: '+str(e))
         pred = model.predict([[sl, sw, pl, pw]])[0]
-        return render_template('index.html',
+        return render_template('main/index.html',
                                result=TARGET_NAMES[pred],
                                sepal_length=sl, sepal_width=sw,
                                petal_length=pl, petal_width=pw,
                                api_key=request.form.get('api_key'))
     
-    return render_template('index.html')
+    return render_template('main/index.html')
 
-@app.route('/api/predict', methods=['POST'])
+@main.route('/api/predict', methods=['POST'])
 def api_predict():
     check_api_key(request)
     data = request.get_json(force=True)
