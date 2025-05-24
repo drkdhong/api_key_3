@@ -9,7 +9,9 @@ MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model.pkl')
 with open(MODEL_PATH, 'rb') as f:
     model = pickle.load(f)
 
-TARGET_NAMES = ['setosa', 'versicolor', 'virginica']
+#TARGET_NAMES = ['setosa', 'versicolor', 'virginica']
+from app.config import Config
+TARGET_NAMES = Config.LABELS   # 라벨 읽기
 
 def check_api_key(request):
     key = (request.headers.get('x-api-key') or
@@ -36,9 +38,7 @@ def index():
                                sepal_length=sl, sepal_width=sw,
                                petal_length=pl, petal_width=pw,
                                api_key=request.form.get('api_key'))
-    
     return render_template('main/index.html')
-
 @main.route('/api/predict', methods=['POST'])
 def api_predict():
     check_api_key(request)

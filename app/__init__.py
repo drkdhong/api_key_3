@@ -1,3 +1,4 @@
+# app/__init__.py
 from flask import Flask
 from .config import Config
 
@@ -10,3 +11,4 @@ def create_app():
 #    app.register_blueprint(main_bp)
     app.register_blueprint(main_bp, url_prefix='/main')
     return app
+
